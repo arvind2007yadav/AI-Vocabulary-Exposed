@@ -477,6 +477,15 @@
       <div class="stat-label">Showing</div>
     </div>
   </div>
+	<!-- Search -->
+	<div style="text-align:center;margin-bottom:30px;">
+	<input
+	  type="text"
+	  id="searchInput"
+	  placeholder="Search vocabulary..."
+	  style="width:100%;max-width:420px;padding:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Space Mono',monospace"
+	>
+	</div>
 
   <!-- Category filter -->
   <div class="filter-row">
@@ -571,6 +580,11 @@ const allWords = words.filter(w => {
   return true;
 });
 
+document.getElementById("searchInput").addEventListener("input", function() {
+  searchTerm = this.value.toLowerCase();
+  renderGrid();
+});
+
 const catColors = {
   thinking: "#a78bfa",
   exploring: "#06b6d4",
@@ -584,6 +598,7 @@ let isPlaying = true;
 let interval;
 let activeFilter = "all";
 let speed = 2000;
+let searchTerm = "";
 
 function getFilteredWords() {
   if (activeFilter === "all") return allWords;
@@ -649,7 +664,15 @@ function filterCat(cat) {
 function renderGrid() {
   const grid = document.getElementById("wordGrid");
   grid.innerHTML = "";
+
   allWords.forEach(w => {
+
+    // SEARCH FILTER (added)
+    if (searchTerm) {
+      const text = (w.word + w.meaning + w.example).toLowerCase();
+      if (!text.includes(searchTerm)) return;
+    }
+
     const card = document.createElement("div");
     card.className = "word-card" + (activeFilter !== "all" && w.cat !== activeFilter ? " hidden" : "");
     card.dataset.cat = w.cat;
